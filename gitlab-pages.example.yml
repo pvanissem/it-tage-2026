@@ -1,0 +1,24 @@
+# Reference only. The active configuration is .gitlab-ci.yml.
+# Keep Pages restricted to project members (pages_access_level=private).
+stages:
+  - deploy
+
+publish-it-tage:
+  stage: deploy
+  image: python:3.12-alpine
+  script:
+    - python3 -B build.py
+    - python3 -B test_deck.py
+    - mkdir public
+    - cp index.html deck.css deck.js public/
+    - mkdir public/portraits
+    - cp portraits/patrick.jpeg public/portraits/
+  pages:
+    publish: public
+    expire_in: never
+  artifacts:
+    access: developer
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
